@@ -1,0 +1,197 @@
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier # Import Decision Tree Classifier
+from sklearn.model_selection import train_test_split # Import train_test_split function
+from sklearn import metrics #Import scikit-learn metrics module for accuracy calculation
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.linear_model import BayesianRidge, LinearRegression
+import os
+import sys
+import sklearn.metrics as mets
+from review import set_metrics as set_metrics
+#https://datascience.stackexchange.com/questions/989/svm-using-scikit-learn-runs-endlessly-and-never-completes-execution
+#https://machinelearningmastery.com/time-series-prediction-lstm-recurrent-neural-networks-python-keras/
+#https://datascienceplus.com/keras-regression-based-neural-networks/
+
+#xgboost
+#random forest
+#lstm
+#rnn
+#dec tree
+#logistic regression
+#ann
+#naive bayes
+#monte carlo
+
+def read_atomic_data(path):
+    if not path or not os.path.exists(path) or not os.path.isfile(path):
+        print("To begin with, your path to data should be proper!")
+        sys.exit(1)
+    df = pd.read_csv(path)
+    columns = df.columns.tolist() # get the columns
+    columns = columns[:-1]
+    df = pd.read_csv(path, usecols=columns)
+    return df, columns
+
+def get_dataset(df, columns):
+    X = df[col[:-1]]
+    y = df.critical_temp
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1) 
+    return (X_train, X_test, y_train, y_test)
+
+def dec_tree(X_train, X_test, y_train, y_test):
+    from sklearn.tree import DecisionTreeRegressor
+    tree = DecisionTreeRegressor(random_state=0)
+    tree.fit(X_train, y_train)
+    y_pred = tree.predict(X_test)
+    dict = {}
+    set_metrics(y_pred, y_test, dict)
+    print(str(dict))
+    return tree.score(X_test, y_test)
+'''
+def set_metrics(y_pred, y_true, dict):
+    try:
+        dict["max_error"] = mets.max_error(y_true, y_pred)
+    except:
+        pass
+    try:
+        dict["explained_variance_score"] = mets.explained_variance_score(y_true, y_pred)
+    except:
+        pass
+    try:
+        dict["mean_absolute_error"] = mets.mean_absolute_error(y_true, y_pred)
+    except:
+        pass
+    try:
+        dict["mean_squared_error"] = mets.mean_squared_error(y_true, y_pred)
+    except:
+        pass
+    try:
+        dict["mean_squared_log_error"] = mets.mean_squared_log_error(y_true, y_pred)
+    except:
+        pass
+    try:
+        dict["median_absolute_error"] = mets.median_absolute_error(y_true, y_pred) 
+    except:
+        pass
+    try:
+        dict["r2_score"] = mets.r2_score(y_true, y_pred)
+    except:
+        pass
+    try:
+        dict["mean_poisson_deviance"] = mets.mean_poisson_deviance(y_true, y_pred)
+    except:
+        pass
+    try:
+        dict["mean_gamma_deviance"] = mets.mean_gamma_deviance(y_true, y_pred)
+    except:
+        pass
+    try:
+        dict["mean_tweedie_deviance"] =  mets.mean_tweedie_deviance(y_true, y_pred)
+    except:
+        pass
+    return dict
+'''
+def dec_tree_1(X_train, X_test, y_train, y_test):
+    from sklearn.tree import DecisionTreeRegressor
+    r= DecisionTreeRegressor(random_state=0)
+    r.fit(X_train, y_train)
+    r.predict(X_test)
+    y_pred = r.predict(X_test)
+    #import sklearn.metrics.Metrics as m
+    dict = {}
+    set_metrics(y_pred, y_test, dict)
+    return dict
+    
+
+def naive(X_train, X_test, y_train, y_test):
+    clf = BayesianRidge(compute_score=True)
+    clf.fit(X_train, y_train)
+    clf.predict(X_test)
+    y_pred = clf.predict(X_test)
+    dict = {}
+    set_metrics(y_pred, y_test, dict)
+    return dict
+
+def linear(X_train, X_test, y_train, y_test):
+    clf = LinearRegression()
+    clf.fit(X_train, y_train)
+    clf.predict(X_test)
+    y_pred = clf.predict(X_test)
+    dict = {}
+    set_metrics(y_pred, y_test, dict)
+    return dict
+
+def svr(X_train, X_test, y_train, y_test):
+    from sklearn import svm
+    clf = svm.SVR()
+    clf.fit(X_train, y_train)
+    clf.predict(X_test)
+    y_pred = clf.predict(X_test)
+    dict = {}
+    set_metrics(y_pred, y_test, dict)
+    return dict
+
+def svr_rbf(X_train, X_test, y_train, y_test):
+    from sklearn import svm
+    clf = svm.SVR(kernel='rbf', C=100, gamma=0.1, epsilon=.1)
+    clf.fit(X_train, y_train)
+    clf.predict(X_test)
+    y_pred = clf.predict(X_test)
+    dict = {}
+    set_metrics(y_pred, y_test, dict)
+    return dict
+
+def svr_linear(X_train, X_test, y_train, y_test):
+    from sklearn import svm
+    clf = svm.SVR(kernel='linear', C=100, gamma='auto')
+    clf.fit(X_train, y_train)
+    clf.predict(X_test)
+    y_pred = clf.predict(X_test)
+    dict = {}
+    set_metrics(y_pred, y_test, dict)
+    return dict
+
+def svr_poly(X_train, X_test, y_train, y_test):
+    from sklearn import svm
+    clf = svm.SVR(kernel='poly', C=100, gamma='auto', degree=3, epsilon=.1,
+               coef0=1)
+    clf.fit(X_train, y_train)
+    clf.predict(X_test)
+    y_pred = clf.predict(X_test)
+    dict = {}
+    set_metrics(y_pred, y_test, dict)
+    return dict
+
+def ard(X_train, X_test, y_train, y_test):
+    from sklearn import linear_model
+    clf = linear_model.ARDRegression()
+    clf.fit(X_train, y_train)
+    clf.predict(X_test)
+    y_pred = clf.predict(X_test)
+    dict = {}
+    set_metrics(y_pred, y_test, dict)
+    return dict
+
+df, col = read_atomic_data("unique_m.csv")
+(X_train, X_test, y_train, y_test) = get_dataset(df, col)
+from sklearn import preprocessing
+X_train = preprocessing.scale(X_train)
+X_test = preprocessing.scale(X_test)
+results  = {}
+print("Trying...")
+results["decision_tree"] = dec_tree_1(X_train, X_test, y_train, y_test)
+#results["simple support vector regression"] = svr(X_train, X_test, y_train, y_test)
+print("Trying...")
+'''
+results["linear regression"] = linear(X_train, X_test, y_train, y_test)
+print("Trying...")
+results["bayes regression"] = naive(X_train, X_test, y_train, y_test)
+results["ARDRegression"] = ard(X_train, X_test, y_train, y_test)
+#results["RBF support vector regression"] = svr_rbf(X_train, X_test, y_train, y_test)
+print("Trying...")
+#results["linear support vector regression"] = svr_linear(X_train, X_test, y_train, y_test)
+print("Trying...")
+#results["poly support vector regression"] = svr_poly(X_train, X_test, y_train, y_test)
+'''
+for key, val in results.items():
+    print(key + "    =====>   " + str(val))
